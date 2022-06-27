@@ -3,7 +3,7 @@ import Game from './src/components/Game';
 
 const App = () => {
   return (
-    <Game randomNumberCount={12}/>
+    <Game randomNumberCount={ 6 }/>
   )
 }
 
