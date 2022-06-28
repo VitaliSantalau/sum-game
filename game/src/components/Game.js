@@ -1,32 +1,43 @@
-import React  from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import getRandomNumber from '../utils/getRandomNumber';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, Button} from 'react-native';
 import Answer from './Answer';
 
-const Game = ({ randomNumberCount }) => {
-  const answers = Array.from(
-    {length: randomNumberCount}, (v, i) => getRandomNumber(0, 10)
-  );
+const Game = ({playNext, sum, answers}) => {
+  const [selectedSum, setSelectedSum] = useState(null);
+  const [status, setStatus] = useState('DEFAULT');
 
-  const sum = answers.slice(0, randomNumberCount - 2)
-    .reduce((acc, item) => acc + item, 0); 
-    // TODO Shuffle the answers
+  useEffect(() => {
+    if (!selectedSum) {
+      return;
+    }
+    if (selectedSum === sum) {
+      setStatus('WON');
+    }
+    if (selectedSum > sum) {
+      setStatus('LOST');
+    }
+  }, [selectedSum, sum]);
+
+  const handlePlay = () => {
+    playNext();
+  };
+
+  const addSelectedSum = number => {
+    setSelectedSum(prev => prev + number);
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sum}>
-        { sum }
-      </Text>
+      <Text style={[styles.sum, styles[status]]}>{sum}</Text>
       <View style={styles.answerContainer}>
-        { 
-          answers.map((item, i) =>
-            <Answer key={i} number={item} />
-          )
-        }
+        {answers.map((item, i) => (
+          <Answer key={i} number={item} addSelectedSum={addSelectedSum} />
+        ))}
       </View>
+      <Button title="Play again" onPress={handlePlay} />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -34,10 +45,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
   },
   sum: {
-    margin: 50, 
+    margin: 50,
     fontSize: 50,
     textAlign: 'center',
-    backgroundColor: '#bbb',
   },
   answerContainer: {
     flex: 1,
@@ -45,6 +55,22 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-around',
   },
-})
+  DEFAULT: {
+    backgroundColor: '#bbb',
+  },
+  WON: {
+    backgroundColor: 'green',
+  },
+  LOST: {
+    backgroundColor: 'red',
+  },
+  next: {
+    marginHorizontal: 100,
+    marginBottom: 30,
+    fontSize: 40,
+    textAlign: 'center',
+    backgroundColor: '#aaa',
+  },
+});
 
 export default Game;

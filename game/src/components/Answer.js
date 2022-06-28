@@ -1,20 +1,22 @@
-import React  from 'react';
-import { Text, StyleSheet, TouchableOpacity   } from 'react-native';
+import React, {useState} from 'react';
+import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const Answer = ({ number }) => {
+const Answer = ({number, addSelectedSum}) => {
+  const [isSelected, setIsSelected] = useState(false);
 
   const handlePress = () => {
-    console.log(number);
-  }
+    addSelectedSum(!isSelected ? number : -number);
+    setIsSelected(!isSelected);
+  };
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      <Text style={styles.answer}>
-        { number }
+      <Text style={[styles.answer, isSelected && styles.selected]}>
+        {number}
       </Text>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   answer: {
@@ -27,9 +29,7 @@ const styles = StyleSheet.create({
   },
   selected: {
     opacity: 0.3,
-
-  }
-})
-
+  },
+});
 
 export default Answer;
